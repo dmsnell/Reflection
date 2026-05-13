@@ -33,6 +33,9 @@ class FunctionReflector extends BaseReflector
     /** @var FunctionReflector\ArgumentReflector[] */
     protected $arguments = array();
 
+    /** @var array */
+    public $uses = array();
+
     /**
      * Initializes the reflector using the function statement object of
      * PHP-Parser.
