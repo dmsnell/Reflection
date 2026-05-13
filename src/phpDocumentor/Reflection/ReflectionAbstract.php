@@ -69,4 +69,56 @@ abstract class ReflectionAbstract
             );
         }
     }
+
+    /**
+     * Returns a string representation of a PHP-Parser name-like value.
+     *
+     * @param mixed $name
+     *
+     * @return string
+     */
+    protected function nameToString($name)
+    {
+        if (null === $name) {
+            return '';
+        }
+
+        if ($name instanceof \PhpParser\Node\Expr\Variable) {
+            return $this->nameToString($name->name);
+        }
+
+        if ($name instanceof \PhpParser\Node\Name) {
+            return implode('\\', $this->nameParts($name));
+        }
+
+        if (is_array($name)) {
+            return implode('\\', array_map(array($this, 'nameToString'), $name));
+        }
+
+        if (is_object($name) && method_exists($name, '__toString')) {
+            return (string) $name;
+        }
+
+        if (is_object($name)) {
+            return get_class($name);
+        }
+
+        return (string) $name;
+    }
+
+    /**
+     * Returns parts from a PHP-Parser Name across 3.x and 4.x.
+     *
+     * @param \PhpParser\Node\Name $name
+     *
+     * @return string[]
+     */
+    protected function nameParts(\PhpParser\Node\Name $name)
+    {
+        if (method_exists($name, 'getParts')) {
+            return $name->getParts();
+        }
+
+        return $name->parts;
+    }
 }

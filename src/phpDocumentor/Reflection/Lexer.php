@@ -13,7 +13,7 @@
 namespace phpDocumentor\Reflection;
 
 use PhpParser\Lexer as BaseLexer;
-use PhpParser\Parser;
+use PhpParser\Parser\Tokens;
 
 /**
  * Custom lexer for phpDocumentor.
@@ -44,7 +44,7 @@ class Lexer extends BaseLexer
         &$value = null,
         &$startAttributes = null,
         &$endAttributes = null
-    ) {
+    ): int {
         $tokenId = parent::getNextToken($value, $startAttributes, $endAttributes);
 
         if ($this->isTokenScalar($tokenId)) {
@@ -67,8 +67,8 @@ class Lexer extends BaseLexer
      */
     protected function isTokenScalar($tokenId)
     {
-        return $tokenId == Parser::T_CONSTANT_ENCAPSED_STRING
-            || $tokenId == Parser::T_LNUMBER
-            || $tokenId == Parser::T_DNUMBER;
+        return $tokenId == Tokens::T_CONSTANT_ENCAPSED_STRING
+            || $tokenId == Tokens::T_LNUMBER
+            || $tokenId == Tokens::T_DNUMBER;
     }
 }

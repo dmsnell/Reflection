@@ -36,10 +36,10 @@ class MethodReflector extends FunctionReflector
      */
     public function getVisibility()
     {
-        if ($this->node->type & Class_::MODIFIER_PROTECTED) {
+        if (method_exists($this->node, 'isProtected') ? $this->node->isProtected() : (bool) ($this->node->flags & Class_::MODIFIER_PROTECTED)) {
             return 'protected';
         }
-        if ($this->node->type & Class_::MODIFIER_PRIVATE) {
+        if (method_exists($this->node, 'isPrivate') ? $this->node->isPrivate() : (bool) ($this->node->flags & Class_::MODIFIER_PRIVATE)) {
             return 'private';
         }
 
@@ -53,7 +53,9 @@ class MethodReflector extends FunctionReflector
      */
     public function isAbstract()
     {
-        return (bool) ($this->node->type & Class_::MODIFIER_ABSTRACT);
+        return method_exists($this->node, 'isAbstract')
+            ? $this->node->isAbstract()
+            : (bool) ($this->node->flags & Class_::MODIFIER_ABSTRACT);
     }
 
     /**
@@ -63,7 +65,9 @@ class MethodReflector extends FunctionReflector
      */
     public function isStatic()
     {
-        return (bool) ($this->node->type & Class_::MODIFIER_STATIC);
+        return method_exists($this->node, 'isStatic')
+            ? $this->node->isStatic()
+            : (bool) ($this->node->flags & Class_::MODIFIER_STATIC);
     }
 
     /**
@@ -73,6 +77,8 @@ class MethodReflector extends FunctionReflector
      */
     public function isFinal()
     {
-        return (bool) ($this->node->type & Class_::MODIFIER_FINAL);
+        return method_exists($this->node, 'isFinal')
+            ? $this->node->isFinal()
+            : (bool) ($this->node->flags & Class_::MODIFIER_FINAL);
     }
 }

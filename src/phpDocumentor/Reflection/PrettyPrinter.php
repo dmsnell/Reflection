@@ -47,11 +47,20 @@ class PrettyPrinter extends \PhpParser\PrettyPrinter\Standard
      */
     public function pScalar_String(String_ $node)
     {
+        $original = $node->getAttribute('rawValue', $node->getAttribute('originalValue'));
+        if (null === $original) {
+            return parent::pScalar_String($node);
+        }
+
+        if (!method_exists($this, 'pNoIndent')) {
+            return $original;
+        }
+
         if (method_exists($this, 'pSafe')) {
-            return $this->pSafe($node->getAttribute('originalValue'));
+            return $this->pSafe($original);
         }
         
-        return $this->pNoIndent($node->getAttribute('originalValue'));
+        return $this->pNoIndent($original);
     }
 
 }

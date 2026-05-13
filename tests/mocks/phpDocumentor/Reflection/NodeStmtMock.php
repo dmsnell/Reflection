@@ -33,6 +33,21 @@ class NodeStmtMock extends \PhpParser\Node\Stmt
         $this->name = $val;
     }
 
+    public function setLine($val)
+    {
+        $this->setAttribute('startLine', $val);
+    }
+
+    public function getType(): string
+    {
+        return 'Stmt_Mock';
+    }
+
+    public function getSubNodeNames(): array
+    {
+        return array('name');
+    }
+
     public function __toString()
     {
         return 'testNodeMock';

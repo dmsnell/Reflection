@@ -26,9 +26,19 @@ use PhpParser\Node\Stmt;
  */
 class NodeStmtMock2 extends Stmt
 {
-    public $type = null;
+    public $flags = 0;
 
     public $implements = array();
 
     public $extends = null;
+
+    public function getType(): string
+    {
+        return 'Stmt_Mock2';
+    }
+
+    public function getSubNodeNames(): array
+    {
+        return array('flags', 'implements', 'extends');
+    }
 }

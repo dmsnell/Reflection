@@ -153,7 +153,7 @@ abstract class BaseReflector extends ReflectionAbstract
     public function getName()
     {
         if (isset($this->node->namespacedName)) {
-            return '\\'.implode('\\', $this->node->namespacedName->parts);
+            return '\\'.$this->nameToString($this->node->namespacedName);
         }
 
         return $this->getShortName();
@@ -167,8 +167,16 @@ abstract class BaseReflector extends ReflectionAbstract
     public function getShortName()
     {
 		if ( isset($this->node->name) ) {
-            return $this->node->name;
+            if ($this->node->name instanceof Expr) {
+                return $this->node->name;
+            }
+
+            return $this->nameToString($this->node->name);
 		}
+
+        if (isset($this->node->var) && $this->node->var instanceof Expr\Variable) {
+            return $this->nameToString($this->node->var->name);
+        }
 
 		if (interface_exists('\Stringable') && $this->node instanceof \Stringable){
             return (string) $this->node;
@@ -211,7 +219,7 @@ abstract class BaseReflector extends ReflectionAbstract
             return $this->context->getNamespace();
         }
 
-        $parts = $this->node->namespacedName->parts;
+        $parts = $this->nameParts($this->node->namespacedName);
         array_pop($parts);
 
         $namespace = implode('\\', $parts);
@@ -317,5 +325,60 @@ abstract class BaseReflector extends ReflectionAbstract
         }
 
         return self::$prettyPrinter->prettyPrintExpr($value);
+    }
+
+    /**
+     * Returns the legacy string form for a type declaration.
+     *
+     * @param mixed $type
+     *
+     * @return string
+     */
+    protected function typeToString($type)
+    {
+        if (null === $type) {
+            return '';
+        }
+
+        if ($type instanceof \PhpParser\Node\NullableType) {
+            return '?'.$this->typeToString($type->type);
+        }
+
+        if (class_exists('\PhpParser\Node\UnionType') && $type instanceof \PhpParser\Node\UnionType) {
+            return implode('|', array_map(array($this, 'typeToString'), $type->types));
+        }
+
+        if (class_exists('\PhpParser\Node\IntersectionType') && $type instanceof \PhpParser\Node\IntersectionType) {
+            return implode('&', array_map(array($this, 'typeToString'), $type->types));
+        }
+
+        $type = $this->nameToString($type);
+        $lower = strtolower($type);
+        $built_in_types = array(
+            'array',
+            'bool',
+            'callable',
+            'false',
+            'float',
+            'int',
+            'iterable',
+            'mixed',
+            'never',
+            'null',
+            'object',
+            'parent',
+            'self',
+            'static',
+            'string',
+            'true',
+            'void',
+            '$this',
+        );
+
+        if ('' === $type || in_array($lower, $built_in_types, true) || 0 === strpos($type, '\\')) {
+            return $type;
+        }
+
+        return '\\'.$type;
     }
 }

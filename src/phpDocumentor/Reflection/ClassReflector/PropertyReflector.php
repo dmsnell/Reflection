@@ -75,10 +75,10 @@ class PropertyReflector extends BaseReflector
      */
     public function getVisibility()
     {
-        if ($this->property->type & \PhpParser\Node\Stmt\Class_::MODIFIER_PROTECTED) {
+        if (method_exists($this->property, 'isProtected') ? $this->property->isProtected() : (bool) ($this->property->flags & \PhpParser\Node\Stmt\Class_::MODIFIER_PROTECTED)) {
             return 'protected';
         }
-        if ($this->property->type & \PhpParser\Node\Stmt\Class_::MODIFIER_PRIVATE) {
+        if (method_exists($this->property, 'isPrivate') ? $this->property->isPrivate() : (bool) ($this->property->flags & \PhpParser\Node\Stmt\Class_::MODIFIER_PRIVATE)) {
             return 'private';
         }
 
@@ -92,7 +92,9 @@ class PropertyReflector extends BaseReflector
      */
     public function isStatic()
     {
-        return (bool) ($this->property->type & \PhpParser\Node\Stmt\Class_::MODIFIER_STATIC);
+        return method_exists($this->property, 'isStatic')
+            ? $this->property->isStatic()
+            : (bool) ($this->property->flags & \PhpParser\Node\Stmt\Class_::MODIFIER_STATIC);
     }
 
     /**

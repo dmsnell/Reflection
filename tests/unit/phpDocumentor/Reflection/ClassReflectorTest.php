@@ -56,7 +56,7 @@ class ClassReflectorTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($class_reflector->isAbstract());
 
-        $node->type = Class_::MODIFIER_ABSTRACT;
+        $node->flags = Class_::MODIFIER_ABSTRACT;
         $this->assertTrue($class_reflector->isAbstract());
     }
 
@@ -77,7 +77,7 @@ class ClassReflectorTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($class_reflector->isFinal());
 
-        $node->type = Class_::MODIFIER_FINAL;
+        $node->flags = Class_::MODIFIER_FINAL;
         $this->assertTrue($class_reflector->isFinal());
     }
 
