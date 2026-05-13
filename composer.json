@@ -4,6 +4,13 @@
     "keywords": ["phpdoc", "phpDocumentor", "reflection", "static analysis"],
     "homepage": "http://www.phpdoc.org",
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:dmsnell/ReflectionDocBlock.git",
+            "no-api": true
+        }
+    ],
     "autoload": {
         "psr-0": {
             "phpDocumentor": ["src/", "tests/unit/", "tests/mocks/"]
@@ -13,7 +20,7 @@
         "php": ">=7.4",
         "psr/log": "~1.0",
         "nikic/php-parser": "^5.7",
-        "phpdocumentor/reflection-docblock": "~2.0"
+        "phpdocumentor/reflection-docblock": "dev-fix/php85-nullable-types as 2.0.5"
     },
     "suggests": {
         "symfony/event-dispatcher": "~2.1"
