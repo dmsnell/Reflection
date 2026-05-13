@@ -127,7 +127,7 @@ abstract class BaseReflector extends ReflectionAbstract
                 $doc_block = new DocBlock(
                     (string) $comment,
                     $this->context,
-                    new Location($comment->getLine())
+                    new Location($comment->getStartLine())
                 );
             } catch (Exception $e) {
                 $this->log($e->getMessage(), LogLevel::CRITICAL);
@@ -273,7 +273,7 @@ abstract class BaseReflector extends ReflectionAbstract
      */
     public function getLinenumber()
     {
-        return $this->node->getLine();
+        return $this->node->getStartLine();
     }
 
     /**

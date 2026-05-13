@@ -244,7 +244,7 @@ class FileReflector extends ReflectionAbstract implements NodeVisitor
                     $docblock = new DocBlock(
                         (string) $comments[0],
                         null,
-                        new Location($comments[0]->getLine())
+                        new Location($comments[0]->getStartLine())
                     );
 
                     // the first DocBlock in a file documents the file if

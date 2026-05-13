@@ -202,7 +202,7 @@ class BaseReflectorTest extends PHPUnit_Framework_TestCase
             new Context()
         );
 
-        $this->assertEquals($node->getLine(), $base_reflector->getLinenumber());
+        $this->assertEquals($node->getStartLine(), $base_reflector->getLinenumber());
 
         $node->setLine(123);
 

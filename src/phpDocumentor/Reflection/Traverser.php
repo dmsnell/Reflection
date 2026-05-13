@@ -73,13 +73,13 @@ class Traverser
     }
 
     /**
-     * Creates a parser object using our own Lexer.
+     * Creates a parser object for the newest PHP version supported by PHP-Parser.
      *
      * @return Parser
      */
     protected function createParser()
     {
-        return (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        return (new ParserFactory)->createForNewestSupportedVersion();
     }
 
     /**
@@ -89,7 +89,7 @@ class Traverser
      */
     protected function createTraverser()
     {
-        $node_traverser = new NodeTraverser(true);
+        $node_traverser = new NodeTraverser();
         $node_traverser->addVisitor(new NameResolver());
 
         foreach ($this->visitors as $visitor) {
