@@ -53,6 +53,8 @@ class IncludeReflector extends BaseReflector
 
     public function getShortName()
     {
-        return (string) $this->node->expr->value;
+        return isset($this->node->expr->value)
+            ? (string) $this->node->expr->value
+            : '';
     }
 }

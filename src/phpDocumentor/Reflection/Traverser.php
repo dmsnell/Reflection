@@ -15,6 +15,7 @@ namespace phpDocumentor\Reflection;
 use PhpParser\Error;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
+use PhpParser\ParserFactory;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use PhpParser\NodeVisitorAbstract;
@@ -72,13 +73,13 @@ class Traverser
     }
 
     /**
-     * Creates a parser object using our own Lexer.
+     * Creates a parser object for the newest PHP version supported by PHP-Parser.
      *
      * @return Parser
      */
     protected function createParser()
     {
-        return new Parser(new Lexer());
+        return (new ParserFactory)->createForNewestSupportedVersion();
     }
 
     /**

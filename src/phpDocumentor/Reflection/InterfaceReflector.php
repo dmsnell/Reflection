@@ -48,7 +48,7 @@ class InterfaceReflector extends BaseReflector
                     }
                     break;
                 case 'PhpParser\Node\Stmt\ClassMethod':
-                    $this->methods[strtolower($stmt->name)] = new ClassReflector\MethodReflector(
+                    $this->methods[strtolower((string) $stmt->name)] = new ClassReflector\MethodReflector(
                         $stmt,
                         $this->context
                     );

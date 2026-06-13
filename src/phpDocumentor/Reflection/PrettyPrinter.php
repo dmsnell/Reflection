@@ -13,13 +13,12 @@
 namespace phpDocumentor\Reflection;
 
 use PhpParser\Node\Scalar\String_;
-use PhpParser\PrettyPrinter\Standard;
 
 /**
  * Custom PrettyPrinter for phpDocumentor.
  *
  * phpDocumentor has a custom PrettyPrinter for PHP-Parser because it needs the
- * unmodified value for Scalar variables instead of an interpreted version.
+ * raw value for scalar variables instead of an interpreted version.
  *
  * If the interpreted version was to be used then the XML interpretation would
  * fail because of special characters.
@@ -28,7 +27,7 @@ use PhpParser\PrettyPrinter\Standard;
  * @license http://www.opensource.org/licenses/mit-license.php MIT
  * @link    http://phpdoc.org
  */
-class PrettyPrinter extends Standard
+class PrettyPrinter extends \PhpParser\PrettyPrinter\Standard
 {
     /**
      * Converts the string into it's original representation without converting
@@ -36,23 +35,22 @@ class PrettyPrinter extends Standard
      *
      * This method is overridden from the original Zend Pretty Printer because
      * the original returns the strings as interpreted by PHP-Parser.
-     * Since we do not want such conversions we take the original that is
-     * injected by our own custom Lexer.
+     * Since we do not want such conversions we take the raw value that is
+     * provided by PHP-Parser.
      *
-     * @param String $node The node to return a string
+     * @param String_ $node The node to return a string
      *     representation of.
-     *
-     * @see Lexer where the originalValue is injected.
      *
      * @return string
      */
-    public function pScalar_String(String_ $node)
+    public function pScalar_String(String_ $node): string
     {
-        if (method_exists($this, 'pSafe')) {
-            return $this->pSafe($node->getAttribute('originalValue'));
+        $original = $node->getAttribute('rawValue');
+        if (null === $original) {
+            return parent::pScalar_String($node);
         }
-        
-        return $this->pNoIndent($node->getAttribute('originalValue'));
+
+        return $original;
     }
 
 }

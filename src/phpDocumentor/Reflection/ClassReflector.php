@@ -52,7 +52,9 @@ class ClassReflector extends InterfaceReflector
      */
     public function isAbstract()
     {
-        return (bool) ($this->node->type & Class_::MODIFIER_ABSTRACT);
+        return method_exists($this->node, 'isAbstract')
+            ? $this->node->isAbstract()
+            : (bool) ($this->node->flags & Class_::MODIFIER_ABSTRACT);
     }
 
     /**
@@ -62,7 +64,9 @@ class ClassReflector extends InterfaceReflector
      */
     public function isFinal()
     {
-        return (bool) ($this->node->type & Class_::MODIFIER_FINAL);
+        return method_exists($this->node, 'isFinal')
+            ? $this->node->isFinal()
+            : (bool) ($this->node->flags & Class_::MODIFIER_FINAL);
     }
 
     /**

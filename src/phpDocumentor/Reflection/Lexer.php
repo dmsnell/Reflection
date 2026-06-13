@@ -13,16 +13,12 @@
 namespace phpDocumentor\Reflection;
 
 use PhpParser\Lexer as BaseLexer;
-use PhpParser\Parser;
 
 /**
- * Custom lexer for phpDocumentor.
+ * PHP-Parser lexer wrapper kept for consumers that reference this class.
  *
- * phpDocumentor has a custom Lexer for PHP-Parser because it needs
- * unmodified value for Scalar variables instead of an interpreted version.
- *
- * If the interpreted version was to be used then the XML interpretation would
- * fail because of special characters.
+ * PHP-Parser 5 provides scalar raw values natively, so phpDocumentor no longer
+ * needs to inject custom token attributes.
  *
  * @author  Mike van Riel <mike.vanriel@naenius.com>
  * @license http://www.opensource.org/licenses/mit-license.php MIT
@@ -30,45 +26,4 @@ use PhpParser\Parser;
  */
 class Lexer extends BaseLexer
 {
-    /**
-     * Retrieves the next token and determines the associated attributes and
-     * returns the token id.
-     *
-     * @param string   $value
-     * @param string[] $startAttributes
-     * @param string[] $endAttributes
-     *
-     * @return int
-     */
-    public function getNextToken(
-        &$value = null,
-        &$startAttributes = null,
-        &$endAttributes = null
-    ) {
-        $tokenId = parent::getNextToken($value, $startAttributes, $endAttributes);
-
-        if ($this->isTokenScalar($tokenId)) {
-            // store original value because the value itself will be interpreted
-            // by PHP_Parser and we want the unformatted value
-            $endAttributes['originalValue'] = $value;
-        }
-
-        return $tokenId;
-    }
-
-    /**
-     * Returns whether the given token id is a scalar that will be interpreted
-     * by PHP-Parser.
-     *
-     * @param int $tokenId The id to check, must match a \PhpParser_Parser::T_*
-     *     constant.
-     *
-     * @return bool
-     */
-    protected function isTokenScalar($tokenId)
-    {
-        return $tokenId == Parser::T_CONSTANT_ENCAPSED_STRING
-            || $tokenId == Parser::T_LNUMBER
-            || $tokenId == Parser::T_DNUMBER;
-    }
 }

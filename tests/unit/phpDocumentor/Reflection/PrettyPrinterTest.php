@@ -37,7 +37,7 @@ class PrettyPrinterTest extends PHPUnit_Framework_TestCase
             $object->pScalar_String(
                 new String_(
                     'Value',
-                    array('originalValue' => 'Another value')
+                    array('rawValue' => 'Another value')
                 )
             )
         );

@@ -33,6 +33,7 @@ use PhpParser\Node\Stmt\Const_ as ConstStmt;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\InlineHTML;
 use PhpParser\Node\Stmt\Interface_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\PropertyProperty;
 use PhpParser\Node\Stmt\Trait_;
@@ -243,7 +244,7 @@ class FileReflector extends ReflectionAbstract implements NodeVisitor
                     $docblock = new DocBlock(
                         (string) $comments[0],
                         null,
-                        new Location($comments[0]->getLine())
+                        new Location($comments[0]->getStartLine())
                     );
 
                     // the first DocBlock in a file documents the file if
@@ -307,6 +308,10 @@ class FileReflector extends ReflectionAbstract implements NodeVisitor
      */
     protected function isNodeDocumentable(Node $node)
     {
+        if ($node instanceof Expression) {
+            $node = $node->expr;
+        }
+
         return ($node instanceof Class_)
             || ($node instanceof Interface_)
             || ($node instanceof ClassConst)
@@ -324,6 +329,12 @@ class FileReflector extends ReflectionAbstract implements NodeVisitor
 
     public function enterNode(Node $node)
     {
+        if ($node instanceof Expression && $this->isNodeDocumentable($node->expr)) {
+            $comments = $node->getAttribute('comments');
+            if (!empty($comments) && empty($node->expr->getAttribute('comments'))) {
+                $node->expr->setAttribute('comments', $comments);
+            }
+        }
     }
 
     public function getName()
@@ -488,14 +499,14 @@ class FileReflector extends ReflectionAbstract implements NodeVisitor
                 /** @var \PhpParser\Node\Stmt\UseUse $use */
                 foreach ($node->uses as $use) {
                     $this->context->setNamespaceAlias(
-                        $use->alias,
-                        implode('\\', $use->name->parts)
+                        (string) (method_exists($use, 'getAlias') ? $use->getAlias() : $use->alias),
+                        $this->nameToString($use->name)
                     );
                 }
                 break;
             case 'PhpParser\Node\Stmt\Namespace_':
                 $this->context->setNamespace(
-                    isset($node->name) && ($node->name) ? implode('\\', $node->name->parts) : ''
+                    isset($node->name) && ($node->name) ? $this->nameToString($node->name) : ''
                 );
                 break;
             case 'PhpParser\Node\Stmt\Class_':

@@ -36,7 +36,7 @@ class BaseReflectorTest extends PHPUnit_Framework_TestCase
     {
         /** @var BaseReflector $base_reflector  */
         $base_reflector = new BaseReflectorMock(
-            $this->getMockBuilder('\PhpParser\Node\Stmt')->disableOriginalConstructor()->getMock(),
+            new NodeStmtMock(),
             new Context()
         );
         $base_reflector->setNamespace('namespace_name');
@@ -57,7 +57,7 @@ class BaseReflectorTest extends PHPUnit_Framework_TestCase
     {
         /** @var BaseReflector $base_reflector  */
         $base_reflector = new BaseReflectorMock(
-            $this->getMockBuilder('\PhpParser\Node\Stmt')->disableOriginalConstructor()->getMock(),
+            new NodeStmtMock(),
             new Context()
         );
         $base_reflector->setNamespace(null);
@@ -202,7 +202,7 @@ class BaseReflectorTest extends PHPUnit_Framework_TestCase
             new Context()
         );
 
-        $this->assertEquals($node->getLine(), $base_reflector->getLinenumber());
+        $this->assertEquals($node->getStartLine(), $base_reflector->getLinenumber());
 
         $node->setLine(123);
 
@@ -254,19 +254,13 @@ class BaseReflectorTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('', $base_reflector->getRepresentationOfValueMock(null));
 
-        $pretty_printer = $this->getMock(
-            '\phpDocumentor\Reflection\PrettyPrinter',
-            array('prettyPrintExpr')
-        );
+        $pretty_printer = new PrettyPrinterMock();
         $base_reflector->setPrettyPrinter($pretty_printer);
-        $pretty_printer
-            ->expects($this->once())
-            ->method('prettyPrintExpr')
-            ->will($this->returnValue('test_output'));
 
         $this->assertEquals(
             'test_output',
             $base_reflector->getRepresentationOfValueMock(new NodeExprMock())
         );
+        $this->assertEquals(1, $pretty_printer->calls);
     }
 }
